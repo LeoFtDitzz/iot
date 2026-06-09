@@ -12,11 +12,9 @@ data_sensor = {
 
 command = "AUTO"
 
-
 @app.route("/")
 def home():
     return "IoT Server Running"
-
 
 @app.route("/data", methods=["POST"])
 def receive_data():

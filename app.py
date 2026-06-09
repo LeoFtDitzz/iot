@@ -18,6 +18,25 @@ def home():
         data=data_sensor
     )
 
+command = "AUTO"
+
+@app.route("/command", methods=["GET"])
+def get_command():
+
+    return command
+
+@app.route("/set_command/<cmd>")
+def set_command(cmd):
+
+    global command
+
+    command = cmd.upper()
+
+    return jsonify({
+        "status": "success",
+        "command": command
+    })
+
 @app.route("/data", methods=["POST"])
 def receive_data():
 

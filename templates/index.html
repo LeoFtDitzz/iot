@@ -1,69 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard IoT Lampu Otomatis</title>
 
-    <title>Dashboard IoT</title>
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
-    >
-
-    <meta http-equiv="refresh" content="5">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    <div class="wave"></div>
-    <div class="wave wave2"></div>
-    <div class="wave wave3"></div>
+<div class="container">
 
-    <div class="container">
+    <h1>Dashboard IoT Lampu Otomatis</h1>
 
-        <h1>Dashboard Monitoring IoT</h1>
+    <div class="card">
 
         <div class="grid">
 
-            <div class="card">
-                <h2>Suhu</h2>
-                <p>{{ data.suhu }} °C</p>
+            <div class="item">
+                <h3>Suhu</h3>
+                <div class="value" id="suhu">0 °C</div>
             </div>
 
-            <div class="card">
-                <h2>Cahaya</h2>
-                <p>{{ data.cahaya }}</p>
+            <div class="item">
+                <h3>Cahaya</h3>
+                <div class="value" id="cahaya">0</div>
             </div>
 
-            <div class="card">
-                <h2>Kondisi</h2>
-                <p>{{ data.kondisi }}</p>
+            <div class="item">
+                <h3>Kondisi</h3>
+                <div class="value" id="kondisi">-</div>
             </div>
 
-            <div class="card">
-                <h2>Waktu</h2>
-                <p>{{ data.waktu }}</p>
+            <div class="item">
+                <h3>Lampu</h3>
+                <div class="value" id="lampu">OFF</div>
             </div>
 
-            <div class="card">
-
-                <h2>Lampu</h2>
-
-                {% if data.kondisi == "Gelap" %}
-                    <p class="on">ON</p>
-                {% else %}
-                    <p class="off">OFF</p>
-                {% endif %}
-
+            <div class="item">
+                <h3>Waktu</h3>
+                <div class="value" id="waktu">-</div>
             </div>
 
         </div>
 
     </div>
 
-</body>
+    <div class="card">
 
+        <h2>Kontrol Lampu</h2>
+
+        <button class="on" onclick="sendCommand('ON')">
+            Lampu ON
+        </button>
+
+        <button class="off" onclick="sendCommand('OFF')">
+            Lampu OFF
+        </button>
+
+        <button class="auto" onclick="sendCommand('AUTO')">
+            AUTO
+        </button>
+
+        <div class="status" id="mode">
+            Mode : AUTO
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadData(){
+
+    const response = await fetch("/sensor");
+    const data = await response.json();
+
+    document.getElementById("suhu").innerHTML =
+        data.suhu + " °C";
+
+    document.getElementById("cahaya").innerHTML =
+        data.cahaya;
+
+    document.getElementById("kondisi").innerHTML =
+        data.kondisi;
+
+    document.getElementById("lampu").innerHTML =
+        data.lampu;
+
+    document.getElementById("waktu").innerHTML =
+        data.waktu;
+}
+
+async function loadMode(){
+
+    const response = await fetch("/command");
+    const mode = await response.text();
+
+    document.getElementById("mode").innerHTML =
+        "Mode : " + mode;
+}
+
+async function sendCommand(cmd){
+
+    await fetch("/set_command/" + cmd);
+
+    loadMode();
+}
+
+loadData();
+loadMode();
+
+setInterval(loadData, 2000);
+setInterval(loadMode, 2000);
+
+</script>
+
+</body>
 </html>

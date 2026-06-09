@@ -13,7 +13,7 @@ data_sensor = {
 command = "AUTO"
 
 @app.route("/")
-def home():
+    def home():
 
 ```
 return render_template(
@@ -23,7 +23,7 @@ return render_template(
 ```
 
 @app.route("/data", methods=["POST"])
-def receive_data():
+    def receive_data():
 
 ```
 global data_sensor
@@ -36,21 +36,21 @@ return jsonify({
 ```
 
 @app.route("/sensor")
-def sensor():
+    def sensor():
 
 ```
 return jsonify(data_sensor)
 ```
 
 @app.route("/command")
-def get_command():
+    def get_command():
 
 ```
 return command
 ```
 
 @app.route("/set_command/<cmd>")
-def set_command(cmd):
+    def set_command(cmd):
 
 ```
 global command
